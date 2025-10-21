@@ -1,5 +1,4 @@
 import { motion } from 'framer-motion';
-import { Link } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Phone } from 'lucide-react';
 import { useCallback, useState, useEffect } from 'react';
@@ -25,7 +24,7 @@ const slides = [
 export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const handleQuoteClick = () => {
-    window.open('https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm', '_blank');
+    window.dispatchEvent(new Event('showContactPopup'));
   };
 
   const nextSlide = useCallback(() => {
@@ -110,15 +109,14 @@ export function Hero() {
               <Phone className="h-5 w-5" />
               <span>Call Now: (407) 461-6039</span>
             </a>
-            <Link to="/services">
-              <Button
-                size="lg"
-                variant="outline"
-                className="text-white border-white hover:bg-white/10 px-6 py-4"
-              >
-                Schedule a Cleaning
-              </Button>
-            </Link>
+            <Button
+              size="lg"
+              variant="outline"
+              onClick={handleQuoteClick}
+              className="text-white border-white hover:bg-white/10 px-6 py-4"
+            >
+              Schedule a Cleaning
+            </Button>
           </div>
         </motion.div>
       </div>

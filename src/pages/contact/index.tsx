@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import { ContactInfoCard } from './components/contact-info-card';
 import { ServiceAreaMap } from './components/service-area-map';
+import { FormContact } from '@/components/forms/FormContact';
 
 export default function ContactPage() {
   return (
@@ -42,34 +43,12 @@ export default function ContactPage() {
             />
           </div>
 
-          {/* GoHighLevel Form */}
+          {/* Contact Form */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-white rounded-lg shadow-sm p-8"
           >
-            <div className="h-[702px]">
-              <iframe
-                src="https://api.leadconnectorhq.com/widget/form/JCh7IU2laXfWKtqmSega"
-                style={{ width: '100%', height: '100%', border: 'none', borderRadius: '3px' }}
-                id="inline-JCh7IU2laXfWKtqmSega" 
-                data-layout="{'id':'INLINE'}"
-                data-trigger-type="alwaysShow"
-                data-trigger-value=""
-                data-activation-type="alwaysActivated"
-                data-activation-value=""
-                data-deactivation-type="neverDeactivate"
-                data-deactivation-value=""
-                data-form-name="contact page Form 2"
-                data-height="702"
-                data-layout-iframe-id="inline-JCh7IU2laXfWKtqmSega"
-                data-form-id="JCh7IU2laXfWKtqmSega"
-                title="contact page Form 2"
-                loading="lazy"
-                width="100%"
-                height="702"
-              />
-            </div>
+            <FormContact formType="embedded" />
           </motion.div>
         </div>
 

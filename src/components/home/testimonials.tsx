@@ -113,14 +113,12 @@ export function Testimonials() {
               Experience the Sonz of Thunder difference in your home or business
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <a
-                href="https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.dispatchEvent(new Event('showContactPopup'))}
                 className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
               >
                 Get Your Free Quote
-              </a>
+              </button>
               <a
                 href="tel:407-461-6039"
                 className="bg-transparent border-2 border-white text-white hover:bg-white hover:text-blue-600 px-6 py-3 rounded-lg font-semibold flex items-center justify-center space-x-2 transition-all duration-200"
