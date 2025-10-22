@@ -53,15 +53,12 @@ export function ServiceOverview() {
                   From ${service.basePrice}
                   {service.priceUnit === 'per_sqft' ? '/sq. ft.' : ''}
                 </span>
-                <a
-                  href="https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm"
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <Button
+                  variant="gold"
+                  onClick={() => window.dispatchEvent(new Event('showContactPopup'))}
                 >
-                  <Button variant="gold">
-                    Get Quote
-                  </Button>
-                </a>
+                  Get Quote
+                </Button>
               </div>
             </motion.div>
           ))}

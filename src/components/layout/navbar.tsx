@@ -19,7 +19,7 @@ export function Navbar() {
   const isHomePage = location.pathname === '/';
 
   const handleQuoteClick = () => {
-    window.open('https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm', '_blank');
+    window.dispatchEvent(new Event('showContactPopup'));
   };
 
   useEffect(() => {

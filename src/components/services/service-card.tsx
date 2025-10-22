@@ -1,8 +1,6 @@
 import { Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
-const QUOTE_URL = 'https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm';
-
 interface ServiceCardProps {
   title: string;
   description: string;
@@ -23,7 +21,7 @@ export function ServiceCard({
   features,
 }: ServiceCardProps) {
   const handleQuoteClick = () => {
-    window.open(QUOTE_URL, '_blank');
+    window.dispatchEvent(new Event('showContactPopup'));
   };
 
   return (
