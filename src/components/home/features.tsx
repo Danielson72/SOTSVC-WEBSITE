@@ -96,14 +96,12 @@ export function Features() {
                 <Phone className="h-5 w-5" />
                 <span>Call (407) 461-6039</span>
               </a>
-              <a
-                href="https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm"
-                target="_blank"
-                rel="noopener noreferrer"
+              <button
+                onClick={() => window.dispatchEvent(new CustomEvent('openContactForm'))}
                 className="bg-orange-500 hover:bg-orange-600 text-white px-6 py-3 rounded-lg font-semibold transition-all duration-200"
               >
                 Get Free Quote
-              </a>
+              </button>
             </div>
           </div>
         </div>

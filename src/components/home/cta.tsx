@@ -11,7 +11,7 @@ const guarantees = [
 
 export function CTA() {
   const handleQuoteClick = () => {
-    window.dispatchEvent(new Event('showContactPopup'));
+    window.dispatchEvent(new CustomEvent('openContactForm'));
   };
 
   return (

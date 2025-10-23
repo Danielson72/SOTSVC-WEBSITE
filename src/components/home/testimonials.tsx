@@ -114,7 +114,7 @@ export function Testimonials() {
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
-                onClick={() => window.dispatchEvent(new Event('showContactPopup'))}
+                onClick={() => window.dispatchEvent(new CustomEvent('openContactForm'))}
                 className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-lg font-semibold transition-all duration-200 transform hover:scale-105"
               >
                 Get Your Free Quote
