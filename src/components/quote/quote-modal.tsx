@@ -1,4 +1,4 @@
-// This file now just redirects to the GoHighLevel form
+// This file now triggers the local FormPopup
 import { useEffect } from 'react';
 
 interface QuoteModalProps {
@@ -9,7 +9,7 @@ interface QuoteModalProps {
 export function QuoteModal({ isOpen, onClose }: QuoteModalProps) {
   useEffect(() => {
     if (isOpen) {
-      window.open('https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm', '_blank');
+      window.dispatchEvent(new CustomEvent('openContactForm'));
       onClose();
     }
   }, [isOpen, onClose]);

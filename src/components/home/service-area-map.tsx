@@ -5,7 +5,7 @@ import { Button } from '@/components/ui/button';
 
 export function ServiceAreaMap() {
   const handleAvailabilityCheck = () => {
-    window.open('https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm', '_blank');
+    window.dispatchEvent(new CustomEvent('openContactForm'));
   };
 
   return (

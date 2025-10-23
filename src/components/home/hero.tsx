@@ -25,7 +25,7 @@ const slides = [
 export function Hero() {
   const [currentSlide, setCurrentSlide] = useState(0);
   const handleQuoteClick = () => {
-    window.open('https://api.leadconnectorhq.com/widget/form/pEHnV0t5Pk0YXdZaeypm', '_blank');
+    window.dispatchEvent(new CustomEvent('openContactForm'));
   };
 
   const nextSlide = useCallback(() => {
