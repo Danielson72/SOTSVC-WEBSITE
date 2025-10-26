@@ -33,38 +33,7 @@ export const supabase = createClient<Database>(supabaseUrl, supabaseKey, {
       eventsPerSecond: 10
     }
   },
-  // Add request timeouts
-  httpClient: {
-    fetch: async (url, options = {}) => {
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000); // 10 second timeout
-
-      try {
-        const response = await fetch(url, {
-          ...options,
-          signal: controller.signal,
-          headers: {
-            ...options.headers,
-            'Cache-Control': 'no-cache',
-            'Pragma': 'no-cache'
-          }
-        });
-
-        if (!response.ok) {
-          throw new Error(`HTTP error! status: ${response.status}`);
-        }
-
-        return response;
-      } catch (error) {
-        if (error.name === 'AbortError') {
-          throw new Error('Request timed out');
-        }
-        throw error;
-      } finally {
-        clearTimeout(timeoutId);
-      }
-    }
-  }
+  // Request timeout handled by default Supabase client
 });
 
 // Add auth state change listener

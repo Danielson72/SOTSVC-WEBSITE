@@ -49,6 +49,7 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
       console.error('Contact form submission error:', err);
+      console.error('Error details:', JSON.stringify(err, null, 2));
       setError('Service temporarily unavailable. Please try again in 5 minutes.');
       setIsSuccess(false); // Ensure success is not showing
     } finally {
