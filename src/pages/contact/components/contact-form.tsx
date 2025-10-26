@@ -34,15 +34,18 @@ export function ContactForm() {
         .insert([contactRequest]);
 
       if (error) throw error;
-      
+
+      // Clear any previous errors and show success
+      setError(null);
       setIsSuccess(true);
       e.currentTarget.reset();
-      
+
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
       console.error('Contact form submission error:', err);
       setError('Service temporarily unavailable. Please try again in 5 minutes.');
+      setIsSuccess(false); // Ensure success is not showing
     } finally {
       setIsSubmitting(false);
     }
@@ -56,7 +59,7 @@ export function ContactForm() {
     >
       <h2 className="text-2xl font-bold text-gray-900 mb-6">Send Us a Message</h2>
 
-      {error && (
+      {error && !isSuccess && (
         <div className="mb-6 p-4 bg-red-50 text-red-600 rounded-md text-sm">
           {error}
         </div>
