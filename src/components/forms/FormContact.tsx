@@ -34,13 +34,20 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
     };
 
     try {
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from('contact_requests')
-        .insert([contactRequest]);
+        .insert([contactRequest])
+        .select();
 
-      if (error) throw error;
+      if (error) {
+        console.error('Contact form submission error:', error);
+        setError('Service temporarily unavailable. Please try again in 5 minutes.');
+        setIsSuccess(false);
+        setIsSubmitting(false);
+        return; // Stop execution on error
+      }
 
-      // Clear any previous errors and show success
+      // Only reached if NO error - clear any previous errors and show success
       setError(null);
       setIsSuccess(true);
       e.currentTarget.reset();
@@ -48,10 +55,10 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
-      console.error('Contact form submission error:', err);
+      console.error('Unexpected error during form submission:', err);
       console.error('Error details:', JSON.stringify(err, null, 2));
       setError('Service temporarily unavailable. Please try again in 5 minutes.');
-      setIsSuccess(false); // Ensure success is not showing
+      setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
     }
