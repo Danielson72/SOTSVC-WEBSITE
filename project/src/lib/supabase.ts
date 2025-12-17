@@ -1,11 +1,12 @@
 import { createClient } from '@supabase/supabase-js';
 import type { Database } from './database.types';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Get env vars from runtime injection (set in index.html) or Vite env vars
+const supabaseUrl = (window as any).__ENV__?.SUPABASE_URL || import.meta.env.VITE_SUPABASE_URL;
+const supabaseKey = (window as any).__ENV__?.SUPABASE_ANON_KEY || import.meta.env.VITE_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseKey) {
-  throw new Error('Missing Supabase environment variables');
+  console.error('Supabase environment variables are missing. Check window.__ENV__ or VITE_ env vars.');
 }
 
 // Create Supabase client with security enhancements
