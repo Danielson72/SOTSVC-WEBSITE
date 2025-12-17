@@ -21,21 +21,20 @@ export interface QuoteFormData {
 export async function submitContactForm(data: ContactFormData) {
   try {
     const { error } = await supabase
-      .from('form_submissions')
+      .from('contact_requests')
       .insert([{
-        type: 'contact',
-        data: {
-          name: data.name,
-          email: data.email,
-          phone: data.phone || null,
-          message: data.message
-        }
+        full_name: data.name,
+        email: data.email,
+        phone: data.phone || null,
+        message: data.message,
+        source_site: 'SOTSVC.com',
+        form_type: 'contact'
       }]);
 
     if (error) {
       console.error('Form submission error:', error);
-      if (error.message?.includes('validate_form_submission')) {
-        throw new Error('Please check your input and try again.');
+      if (error.message?.includes('row-level security')) {
+        throw new Error('Unable to submit form. Please try again.');
       }
       throw error;
     }
