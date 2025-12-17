@@ -22,16 +22,17 @@ export async function submitContactForm(data: ContactFormData) {
   try {
     console.log('Attempting Supabase insert to contact_requests...')
 
+    // Note: Do NOT chain .select() after insert - anon role only has INSERT permission
     const { error } = await supabase
       .from('contact_requests')
-      .insert([{
+      .insert({
         full_name: data.name,
         email: data.email,
         phone: data.phone || null,
         message: data.message,
         source_site: 'SOTSVC.com',
         form_type: 'contact'
-      }])
+      })
 
     if (error) {
       console.error('Supabase error:', error)
