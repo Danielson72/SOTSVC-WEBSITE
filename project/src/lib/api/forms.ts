@@ -20,6 +20,8 @@ export interface QuoteFormData {
 
 export async function submitContactForm(data: ContactFormData) {
   try {
+    console.log('Attempting Supabase insert to contact_requests...')
+
     const { error } = await supabase
       .from('contact_requests')
       .insert([{
@@ -29,18 +31,22 @@ export async function submitContactForm(data: ContactFormData) {
         message: data.message,
         source_site: 'SOTSVC.com',
         form_type: 'contact'
-      }]);
+      }])
 
     if (error) {
-      console.error('Form submission error:', error);
+      console.error('Supabase error:', error)
+      console.error('Error details:', error?.message, error?.code, error?.details)
       if (error.message?.includes('row-level security')) {
         throw new Error('Unable to submit form. Please try again.');
       }
       throw error;
     }
+
+    console.log('Insert successful')
     return { success: true };
-  } catch (error) {
-    console.error('Contact form submission failed:', error);
+  } catch (error: any) {
+    console.error('Contact form submission failed:', error)
+    console.error('Error details:', error?.message, error?.code, error?.details)
     if (error instanceof Error) {
       throw error;
     } else {
