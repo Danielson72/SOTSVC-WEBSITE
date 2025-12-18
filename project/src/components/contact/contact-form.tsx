@@ -26,9 +26,13 @@ export function ContactForm() {
     };
 
     try {
-      await submitContactForm(data);
-      setIsSuccess(true);
-      e.currentTarget.reset();
+      const result = await submitContactForm(data);
+      if (result.success) {
+        setIsSuccess(true);
+        e.currentTarget.reset();
+      } else {
+        setError(result.error || 'An error occurred');
+      }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
     } finally {

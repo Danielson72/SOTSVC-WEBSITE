@@ -1,94 +1,63 @@
-import { supabase } from '@/lib/supabase';
+// Contact form submission via n8n webhook
+// n8n handles: database insert, email to owner, confirmation to customer
 
 export interface ContactFormData {
-  name: string;
-  email: string;
-  phone?: string;
-  message: string;
+  name: string
+  email: string
+  phone?: string
+  message: string
 }
 
-export interface QuoteFormData {
-  fullName: string;
-  email: string;
-  phone: string;
-  serviceType: string;
-  address: string;
-  preferredDate: string;
-  preferredTime: string;
-  smsOptIn: boolean;
+export interface FormResponse {
+  success: boolean
+  message?: string
+  error?: string
 }
 
-export async function submitContactForm(data: ContactFormData) {
+// n8n webhook URL - handles everything server-side
+const N8N_WEBHOOK_URL = 'https://sonzofthunder72.app.n8n.cloud/webhook/sotsvc-contact-form'
+
+export async function submitContactForm(data: ContactFormData): Promise<FormResponse> {
+  console.log('=== FORM SUBMISSION START ===')
+  console.log('Posting to n8n webhook...')
+
   try {
-    console.log('Attempting Supabase insert to contact_requests...')
-    console.log('Supabase URL:', 'https://jvznxszxlqtvizpjokav.supabase.co')
-
-    // Supabase JS v2: No second argument, no .select() - just insert
-    const { error } = await supabase
-      .from('contact_requests')
-      .insert([{
-        full_name: data.name,
+    const response = await fetch(N8N_WEBHOOK_URL, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        name: data.name,
         email: data.email,
-        phone: data.phone || null,
-        message: data.message,
-        source_site: 'SOTSVC.com',
-        form_type: 'contact'
-      }])
+        phone: data.phone || '',
+        message: data.message
+      })
+    })
 
-    if (error) {
-      console.error('Supabase error:', error)
-      console.error('Error details:', error?.message, error?.code, error?.details)
-      if (error.message?.includes('row-level security')) {
-        throw new Error('Unable to submit form. Please try again.');
+    console.log('Response status:', response.status)
+
+    if (!response.ok) {
+      const errorText = await response.text()
+      console.error('Webhook error:', errorText)
+      return {
+        success: false,
+        error: 'Failed to submit form. Please try again.'
       }
-      throw error;
     }
 
-    console.log('Insert successful')
-    return { success: true };
+    const result = await response.json()
+    console.log('=== SUBMISSION SUCCESS ===', result)
+
+    return {
+      success: true,
+      message: result.message || 'Thank you! We will be in touch soon.'
+    }
   } catch (error: any) {
-    console.error('Contact form submission failed:', error)
-    console.error('Error details:', error?.message, error?.code, error?.details)
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error('Failed to submit form. Please try again later.');
-    }
-  }
-}
-
-export async function submitQuoteForm(data: QuoteFormData) {
-  try {
-    const { error } = await supabase
-      .from('form_submissions')
-      .insert([{
-        type: 'quote',
-        data: {
-          fullName: data.fullName,
-          email: data.email,
-          phone: data.phone,
-          serviceType: data.serviceType,
-          address: data.address,
-          preferredDate: data.preferredDate,
-          preferredTime: data.preferredTime,
-          smsOptIn: data.smsOptIn
-        }
-      }]);
-
-    if (error) {
-      console.error('Form submission error:', error);
-      if (error.message?.includes('validate_form_submission')) {
-        throw new Error('Please check your input and try again.');
-      }
-      throw error;
-    }
-    return { success: true };
-  } catch (error) {
-    console.error('Quote form submission failed:', error);
-    if (error instanceof Error) {
-      throw error;
-    } else {
-      throw new Error('Failed to submit quote request. Please try again later.');
+    console.error('=== SUBMISSION ERROR ===', error)
+    return {
+      success: false,
+      error: error?.message || 'Network error. Please try again.'
     }
   }
 }
