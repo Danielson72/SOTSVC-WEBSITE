@@ -21,8 +21,9 @@ export interface QuoteFormData {
 export async function submitContactForm(data: ContactFormData) {
   try {
     console.log('Attempting Supabase insert to contact_requests...')
+    console.log('Supabase URL:', 'https://jvznxszxlqtvizpjokav.supabase.co')
 
-    // CRITICAL: returning: 'minimal' prevents ?columns= in URL, bypassing SELECT policy requirement
+    // Supabase JS v2: No second argument, no .select() - just insert
     const { error } = await supabase
       .from('contact_requests')
       .insert([{
@@ -32,7 +33,7 @@ export async function submitContactForm(data: ContactFormData) {
         message: data.message,
         source_site: 'SOTSVC.com',
         form_type: 'contact'
-      }], { returning: 'minimal' })
+      }])
 
     if (error) {
       console.error('Supabase error:', error)
