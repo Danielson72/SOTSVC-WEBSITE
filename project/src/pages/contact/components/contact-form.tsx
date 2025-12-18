@@ -4,7 +4,9 @@ import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField } from '@/components/ui/form';
-import { supabase } from '@/lib/supabase';
+
+// n8n webhook URL - handles everything server-side
+const N8N_WEBHOOK_URL = 'https://sonzofthunder72.app.n8n.cloud/webhook/sotsvc-contact-form'
 
 export function ContactForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -17,23 +19,39 @@ export function ContactForm() {
     setError(null);
 
     const formData = new FormData(e.currentTarget);
-    const message = {
-      name: formData.get('name'),
-      email: formData.get('email'),
-      phone: formData.get('phone'),
-      message: formData.get('message'),
-    };
+    
+    console.log('=== CONTACT FORM SUBMISSION START ===')
+    console.log('Posting to n8n webhook...')
 
     try {
-      const { error } = await supabase
-        .from('contact_messages')
-        .insert([message]);
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.get('name'),
+          email: formData.get('email'),
+          phone: formData.get('phone') || '',
+          message: formData.get('message'),
+        })
+      })
 
-      if (error) throw error;
+      console.log('Response status:', response.status)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Webhook error:', errorText)
+        throw new Error('Failed to send message')
+      }
+
+      const result = await response.json()
+      console.log('=== SUBMISSION SUCCESS ===', result)
       
       setIsSuccess(true);
       e.currentTarget.reset();
     } catch (err) {
+      console.error('=== SUBMISSION ERROR ===', err)
       setError('Failed to send message. Please try again.');
     } finally {
       setIsSubmitting(false);
