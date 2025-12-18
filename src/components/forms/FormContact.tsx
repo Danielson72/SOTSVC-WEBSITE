@@ -4,7 +4,9 @@ import { Send } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { FormField } from '@/components/ui/form';
-import { supabase } from '@/lib/supabase';
+
+// n8n webhook URL - handles everything server-side
+const N8N_WEBHOOK_URL = 'https://sonzofthunder72.app.n8n.cloud/webhook/sotsvc-contact-form'
 
 interface FormContactProps {
   formType?: 'embedded' | 'popup' | 'standalone';
@@ -23,31 +25,40 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
 
     const formData = new FormData(e.currentTarget);
     
-    // Match backend schema: contact_requests table
-    const contactRequest = {
-      full_name: formData.get('name') as string,
-      email: formData.get('email') as string,
-      phone: (formData.get('phone') as string) || null,
-      message: (formData.get('message') as string) || null,
-      form_type: formType,
-      source_site: typeof window !== 'undefined' ? window.location.hostname : 'sotsvc.com',
-    };
+    console.log('=== FORM CONTACT SUBMISSION START ===')
+    console.log('Posting to n8n webhook...')
 
     try {
-      const { data, error } = await supabase
-        .from('contact_requests')
-        .insert([contactRequest])
-        .select();
+      const response = await fetch(N8N_WEBHOOK_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: formData.get('name') as string,
+          email: formData.get('email') as string,
+          phone: (formData.get('phone') as string) || '',
+          message: (formData.get('message') as string) || '',
+          form_type: formType,
+          source_site: typeof window !== 'undefined' ? window.location.hostname : 'sotsvc.com',
+        })
+      })
 
-      if (error) {
-        console.error('Contact form submission error:', error);
-        setError('Service temporarily unavailable. Please try again in 5 minutes.');
+      console.log('Response status:', response.status)
+
+      if (!response.ok) {
+        const errorText = await response.text()
+        console.error('Webhook error:', errorText)
+        setError('Failed to send message. Please try again.');
         setIsSuccess(false);
         setIsSubmitting(false);
-        return; // Stop execution on error
+        return;
       }
 
-      // Only reached if NO error - clear any previous errors and show success
+      const result = await response.json()
+      console.log('=== SUBMISSION SUCCESS ===', result)
+
+      // Clear any previous errors and show success
       setError(null);
       setIsSuccess(true);
       e.currentTarget.reset();
@@ -55,9 +66,8 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
       // Reset success message after 5 seconds
       setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
-      console.error('Unexpected error during form submission:', err);
-      console.error('Error details:', JSON.stringify(err, null, 2));
-      setError('Service temporarily unavailable. Please try again in 5 minutes.');
+      console.error('=== SUBMISSION ERROR ===', err);
+      setError('Network error. Please try again.');
       setIsSuccess(false);
     } finally {
       setIsSubmitting(false);
@@ -151,4 +161,3 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
     </motion.div>
   );
 }
-
