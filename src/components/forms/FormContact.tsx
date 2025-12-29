@@ -55,10 +55,15 @@ export function FormContact({ formType = 'embedded', className = '' }: FormConta
         return;
       }
 
-      const result = await response.json()
-      console.log('=== SUBMISSION SUCCESS ===', result)
+      // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
+      try {
+        const result = await response.json()
+        console.log('=== SUBMISSION SUCCESS ===', result)
+      } catch (jsonError) {
+        console.log('Could not parse response JSON (CORS may block body), but request succeeded')
+      }
 
-      // Clear any previous errors and show success
+      // HTTP 200 means success regardless of whether we could read the body
       setError(null);
       setIsSuccess(true);
       e.currentTarget.reset();

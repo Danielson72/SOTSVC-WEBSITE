@@ -48,9 +48,15 @@ export async function submitContactForm(data: ContactFormData) {
       throw new Error('Failed to submit form. Please try again.')
     }
 
-    const result = await response.json()
-    console.log('=== SUBMISSION SUCCESS ===', result)
+    // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
+    try {
+      const result = await response.json()
+      console.log('=== SUBMISSION SUCCESS ===', result)
+    } catch (jsonError) {
+      console.log('Could not parse response JSON (CORS may block body), but request succeeded')
+    }
 
+    // HTTP 200 means success regardless of whether we could read the body
     return { success: true };
   } catch (error: any) {
     console.error('=== SUBMISSION ERROR ===', error)
@@ -90,9 +96,15 @@ export async function submitQuoteForm(data: QuoteFormData) {
       throw new Error('Failed to submit quote. Please try again.')
     }
 
-    const result = await response.json()
-    console.log('=== QUOTE SUCCESS ===', result)
+    // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
+    try {
+      const result = await response.json()
+      console.log('=== QUOTE SUCCESS ===', result)
+    } catch (jsonError) {
+      console.log('Could not parse response JSON (CORS may block body), but request succeeded')
+    }
 
+    // HTTP 200 means success regardless of whether we could read the body
     return { success: true };
   } catch (error: any) {
     console.error('=== QUOTE ERROR ===', error)
