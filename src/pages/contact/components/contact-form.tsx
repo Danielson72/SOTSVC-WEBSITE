@@ -41,30 +41,17 @@ export function ContactForm() {
 
       console.log('Response status:', response.status)
 
-      if (!response.ok) {
-        const errorText = await response.text()
-        console.error('Webhook error:', errorText)
+      // HTTP 200 = success, don't try to parse JSON (causes CORS issues)
+      if (response.ok) {
+        setError(null);
+        setIsSuccess(true);
+        e.currentTarget.reset();
+        // Reset success message after 5 seconds
+        setTimeout(() => setIsSuccess(false), 5000);
+      } else {
         setError('Failed to send message. Please try again.');
         setIsSuccess(false);
-        setIsSubmitting(false);
-        return;
       }
-
-      // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
-      try {
-        const result = await response.json()
-        console.log('=== SUBMISSION SUCCESS ===', result)
-      } catch (jsonError) {
-        console.log('Could not parse response JSON (CORS may block body), but request succeeded')
-      }
-
-      // HTTP 200 means success regardless of whether we could read the body
-      setError(null);
-      setIsSuccess(true);
-      e.currentTarget.reset();
-
-      // Reset success message after 5 seconds
-      setTimeout(() => setIsSuccess(false), 5000);
     } catch (err) {
       console.error('=== SUBMISSION ERROR ===', err);
       setError('Network error. Please try again.');

@@ -42,22 +42,12 @@ export async function submitContactForm(data: ContactFormData) {
 
     console.log('Response status:', response.status)
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Webhook error:', errorText)
+    // HTTP 200 = success, don't try to parse JSON (causes CORS issues)
+    if (response.ok) {
+      return { success: true };
+    } else {
       throw new Error('Failed to submit form. Please try again.')
     }
-
-    // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
-    try {
-      const result = await response.json()
-      console.log('=== SUBMISSION SUCCESS ===', result)
-    } catch (jsonError) {
-      console.log('Could not parse response JSON (CORS may block body), but request succeeded')
-    }
-
-    // HTTP 200 means success regardless of whether we could read the body
-    return { success: true };
   } catch (error: any) {
     console.error('=== SUBMISSION ERROR ===', error)
     throw new Error(error?.message || 'Network error. Please try again.')
@@ -90,22 +80,12 @@ export async function submitQuoteForm(data: QuoteFormData) {
 
     console.log('Response status:', response.status)
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Webhook error:', errorText)
+    // HTTP 200 = success, don't try to parse JSON (causes CORS issues)
+    if (response.ok) {
+      return { success: true };
+    } else {
       throw new Error('Failed to submit quote. Please try again.')
     }
-
-    // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
-    try {
-      const result = await response.json()
-      console.log('=== QUOTE SUCCESS ===', result)
-    } catch (jsonError) {
-      console.log('Could not parse response JSON (CORS may block body), but request succeeded')
-    }
-
-    // HTTP 200 means success regardless of whether we could read the body
-    return { success: true };
   } catch (error: any) {
     console.error('=== QUOTE ERROR ===', error)
     throw new Error(error?.message || 'Network error. Please try again.')

@@ -41,22 +41,12 @@ export async function submitInquiry(data: CustomerInquiry) {
 
     console.log('Response status:', response.status)
 
-    if (!response.ok) {
-      const errorText = await response.text()
-      console.error('Webhook error:', errorText)
+    // HTTP 200 = success, don't try to parse JSON (causes CORS issues)
+    if (response.ok) {
+      return true
+    } else {
       throw new Error('Failed to submit inquiry. Please try again.')
     }
-
-    // Try to parse JSON, but don't fail if we can't (CORS might block reading body)
-    try {
-      const result = await response.json()
-      console.log('=== INQUIRY SUCCESS ===', result)
-    } catch (jsonError) {
-      console.log('Could not parse response JSON (CORS may block body), but request succeeded')
-    }
-
-    // HTTP 200 means success regardless of whether we could read the body
-    return true
   } catch (error: any) {
     console.error('=== INQUIRY ERROR ===', error)
     throw new Error(error?.message || 'Network error. Please try again.')
